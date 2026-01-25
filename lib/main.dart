@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 void main() {
-  myDefaultParams();
-  myFactoryConstructor();
-  myInitializerConstructor();
-  myMixins();
-  myAssert();
-  myCollections();
-
   runApp(const MyApp());
 }
 
@@ -17,232 +11,214 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Основи Dart'),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              // Пункт 1
-              Text(
-                '1. Оператори синтаксичного цукру (?? та ??=)',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                '?? — повертає праве значення, якщо ліве null. ??= — присвоює значення змінній лише якщо вона null. Зменшує кількість умовних перевірок в коді.',
-              ),
-              SizedBox(height: 16),
-
-              // Пункт 2
-              Text(
-                '2. Лямбда-функції та замикання',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Лямбда — короткий запис функцій у вигляді (параметри) => вираз. Замикання — функція зберігає доступ до змінних із зовнішньої області видимості.',
-              ),
-              SizedBox(height: 16),
-
-              // Пункт 3
-              Text(
-                '3. Використання параметрів за замовчуванням ',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Параметру можна вказати значення за замовчуванням, якщо при виклику функції його не передали. Покращує гнучкість і скорочує кількість перевантажених функцій.'
-              ),
-              SizedBox(height: 16),
-
-              // Пункт 4
-              Text(
-                '4.1 Різні варіанти конструкторів',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                  "Фабричний конструктор (factory) може повертати не лише нові об'єкти, а й існуючі. Дозволяє контролювати процес створення екземплярів.",
-              ),
-              SizedBox(height: 16),
-
-              Text(
-                '4.2 Різні варіанти конструкторів',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                  "Конструктор з ініціалізаційним списком (:) дозволяє ініціалізувати поля перед виконанням тіла конструктора.Корисно для final полів та обчислень при створенні об'єкта.",
-              ),
-              SizedBox(height: 16),
-
-              // Пункт 5
-              Text(
-                '5. Використання міксинів',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                  'Міксини дозволяють додавати методи та властивості до класу без спадкування. Використовуються з ключовим словом with.',
-              ),
-              SizedBox(height: 16),
-
-              // Пункт 6
-              Text(
-                '6. Використання ключового слова assert',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                  'assert використовується для перевірки умов у debug-режимі. Допомагає виявити неправильні значення під час розробки.',
-              ),
-              SizedBox(height: 16),
-
-              // Пункт 7
-              Text(
-                '7.  Робота з різними типами колекцій',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text('List — впорядкований список елементів.'),
-              Text('Set — множина унікальних значень.'),
-              Text('Map — структура «ключ → значення».'),
-              SizedBox(height: 16),
-
-            ],
-          ),
-        ),
-      ),
+      title: 'Flutter Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const MyWidget(),
     );
   }
 }
 
-/// Пункт 1
-void myNullOperators() {
-  String? name;
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
 
-  String displayName = name ?? 'Гість';
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[200],
+      body: Column(
+        children: [
+          // Хедер
+          Container(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Логотип
+                Image.asset('assets/images/logo.png', width: 45, height: 45),
 
-  name ??= 'Anton';
+                SizedBox(width: 8),
 
-  print('displayName: $displayName');
-  print('name після ??=: $name');
-}
+                // Назва сайту (розтягується)
+                Expanded(
+                  child: Text(
+                    'YouTube',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontFamily: "Bebas",
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(2.0, 2.0),
+                          blurRadius: 8.0,
+                          color: Color.fromARGB(121, 0, 0, 0),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
 
-/// Пункт 2
-void myLambdaAndClosure() {
-  var doubleNumber = (int n) => n * 2;
-  int result = doubleNumber(5);
+                IconButton(
+                  icon: const Icon(
+                    Icons.search,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  iconSize: 30,
+                  onPressed: () {
+                    print('Пошук натиснули');
+                  },
+                ),
 
-  Function makeAdder(int x) {
-    return (int y) {
-      return x + y;
-    };
+                IconButton(
+                  icon: const Icon(
+                    Icons.notifications,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  iconSize: 30,
+                  onPressed: () {
+                    print('Сповіщення натиснули');
+                  },
+                ),
+
+                IconButton(
+                  icon: const Icon(
+                    Icons.menu,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  iconSize: 30,
+                  onPressed: () {
+                    print('Меню натиснули');
+                  },
+                ),
+              ],
+            ),
+          ),
+          //відео 1
+          Expanded(
+            child: Container(
+              color: Colors.grey[200],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/images/preview-1.jpg',
+                    width: double.infinity,
+                    height: 220,
+                    fit: BoxFit.cover,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'Flutter in 100 seconds',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'Fireship • 931K переглядів • 5 років назад',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //відео 2
+          Expanded(
+            child: Container(
+              color: Colors.grey[200],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Image.asset(
+                    'assets/images/preview-2.jpg',
+                    width: double.infinity,
+                    height: 220,
+                    fit: BoxFit.cover,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'Dart in 100 seconds',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'Fireship • 1M переглядів • 4 роки назад',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //відео 3
+          Expanded(
+            child: Container(
+              color: Colors.grey[200],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'assets/images/preview-3.jpg',
+                    width: double.infinity,
+                    height: 220,
+                    fit: BoxFit.cover,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'React in 100 seconds',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'Fireship • 1.6M переглядів • 5 років назад',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
-
-  var add5 = makeAdder(5);
-  int sum = add5(3);
-
-  print('result (doubleNumber(5)): $result');
-  print('sum (add5(3)): $sum');
-}
-
-/// Пункт 3
-void myDefaultParams() {
-  int add(int a, [int b = 10]) {
-    return a + b;
-  }
-
-  int result1 = add(5);
-  int result2 = add(5, 3);
-
-  print('add(5) = $result1');
-  print('add(5, 3) = $result2');
-}
-
-/// Пункт 4.1
-class User {
-  String name;
-
-  User(this.name);
-
-  factory User.fromName(String name) {
-    return User(name);
-  }
-}
-
-void myFactoryConstructor() {
-  User user1 = User('Anton');
-  User user2 = User.fromName('Tanya');
-
-  print('user1.name = ${user1.name}');
-  print('user2.name = ${user2.name}');
-}
-
-/// Пункт 4.2
-class Point {
-  int x;
-  int y;
-  int sum;
-
-  Point(this.x, this.y) : sum = x + y;
-}
-
-void myInitializerConstructor() {
-  Point p = Point(2, 3);
-
-  print('x = ${p.x}');
-  print('y = ${p.y}');
-  print('sum = ${p.sum}');
-}
-
-/// Пункт 5
-mixin CanSayHello {
-  void sayHello() {
-    print('Привіт!');
-  }
-}
-
-class Person with CanSayHello {
-  String name;
-
-  Person(this.name);
-}
-
-void myMixins() {
-  Person p = Person('Anton');
-
-  print('Імʼя: ${p.name}');
-  p.sayHello();
-}
-
-/// Пункт 6
-void myAssert() {
-  int age = 20;
-
-  assert(age >= 0);
-
-  print('age = $age');
-}
-
-/// Пункт 7
-void myCollections() {
-  List<int> numbers = [1, 2, 3];
-  numbers.add(4);
-
-  Set<int> uniqueNumbers = {1, 2, 2, 3};
-
-  Map<String, int> ages = {
-    'Anton': 20,
-    'Tanya': 18,
-  };
-
-  print('numbers: $numbers');
-  print('uniqueNumbers: $uniqueNumbers');
-  print('ages: $ages');
 }
