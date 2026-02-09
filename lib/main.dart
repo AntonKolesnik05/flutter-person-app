@@ -9,11 +9,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MyWidget(),
+      home: MyWidget(),
     );
   }
+}
+
+class VideoData {
+  final String image;
+  final String title;
+  final String meta;
+
+  const VideoData({
+    required this.image,
+    required this.title,
+    required this.meta,
+  });
 }
 
 class MyWidget extends StatefulWidget {
@@ -26,10 +38,53 @@ class MyWidget extends StatefulWidget {
 class _MyWidgetState extends State<MyWidget> {
   int selectedIndex = 0;
 
+  final Set<String> subscribedChannels = {};
+
+  final List<VideoData> videos = const [
+    VideoData(
+      image: "assets/images/preview-1.jpg",
+      title: "Flutter in 100 seconds",
+      meta: "Fireship • 1M views",
+    ),
+    VideoData(
+      image: "assets/images/preview-5.jpg",
+      title: "Me at the zoo",
+      meta: "jawed • 381M views",
+    ),
+    VideoData(
+      image: "assets/images/preview-6.jpg",
+      title: "1 A.M Study Session 📚 [lofi hip hop]",
+      meta: "Lofi Girl • 129M views",
+    ),
+    VideoData(
+      image: "assets/images/preview-4.jpg",
+      title: "Try Not To Laugh 🤣 2026 #66",
+      meta: "FMW - Funny Moments • 97K views",
+    ),
+    VideoData(
+      image: "assets/images/preview-2.jpg",
+      title: "Dart in 100 seconds",
+      meta: "Fireship • 2M views",
+    ),
+    VideoData(
+      image: "assets/images/preview-3.jpg",
+      title: "React in 100 seconds",
+      meta: "Fireship • 937K views",
+    ),
+  ];
+
+
+  void subscribeTo(String channelId) {
+    setState(() {
+      subscribedChannels.add(channelId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       drawer: Align(
         alignment: Alignment.centerLeft,
         child: FractionallySizedBox(
@@ -88,18 +143,24 @@ class _MyWidgetState extends State<MyWidget> {
 
       body: Column(
         children: [
-          const Header(),
+          Header(subscriptionsCount: subscribedChannels.length),
 
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              children: const [
-                VideoCard("assets/images/preview-1.jpg", "Flutter in 100 seconds"),
-                VideoCard("assets/images/preview-2.jpg", "Dart in 100 seconds"),
-                VideoCard("assets/images/preview-3.jpg", "React in 100 seconds"),
-                VideoCard("assets/images/preview-1.jpg", "Flutter in 100 seconds"),
-                VideoCard("assets/images/preview-2.jpg", "Dart in 100 seconds"),
-                VideoCard("assets/images/preview-3.jpg", "React in 100 seconds"),
+              children: [
+                for (final v in videos)
+                  VideoCard(
+                    image: v.image,
+                    title: v.title,
+                    meta: v.meta,
+
+                    channelId: v.title,
+
+                    isSubscribed: subscribedChannels.contains(v.title),
+
+                    onSubscribe: subscribeTo,
+                  ),
               ],
             ),
           ),
@@ -115,7 +176,9 @@ class _MyWidgetState extends State<MyWidget> {
 }
 
 class Header extends StatelessWidget {
-  const Header({super.key});
+  final int subscriptionsCount;
+
+  const Header({required this.subscriptionsCount, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -145,9 +208,11 @@ class Header extends StatelessWidget {
               ),
             ],
           ),
+
           Row(
             children: [
               IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+              SubscriptionsBadge(count: subscriptionsCount),
             ],
           ),
         ],
@@ -156,11 +221,68 @@ class Header extends StatelessWidget {
   }
 }
 
+class SubscriptionsBadge extends StatelessWidget {
+  final int count;
+
+  const SubscriptionsBadge({required this.count, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.subscriptions_outlined),
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Subscribers: $count")),
+            );
+          },
+        ),
+        if (count > 0)
+          Positioned(
+            right: 6,
+            top: 6,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                "$count",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class VideoCard extends StatelessWidget {
   final String image;
   final String title;
+  final String meta;
 
-  const VideoCard(this.image, this.title, {super.key});
+  final String channelId;
+  final bool isSubscribed;
+
+  final void Function(String channelId) onSubscribe;
+
+  const VideoCard({
+    required this.image,
+    required this.title,
+    required this.meta,
+    required this.channelId,
+    required this.isSubscribed,
+    required this.onSubscribe,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -174,14 +296,18 @@ class VideoCard extends StatelessWidget {
         children: [
           Hero(
             tag: image,
-            child: Image.asset(
-              image,
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                image,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 8),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
@@ -189,14 +315,68 @@ class VideoCard extends StatelessWidget {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(left: 8, bottom: 10),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 8, top: 2),
             child: Text(
-              "Fireship • 1M views",
-              style: TextStyle(color: Color.fromARGB(255, 112, 112, 112)),
+              meta,
+              style: const TextStyle(color: Color.fromARGB(255, 112, 112, 112)),
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const LikeButton(),
+
+                ElevatedButton(
+                  onPressed: isSubscribed ? null : () => onSubscribe(channelId),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isSubscribed ? Colors.grey : Colors.red,
+                  ),
+                  child: Text(
+                    isSubscribed ? "Subscribed" : "Subscribe",
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 6),
         ],
+      ),
+    );
+  }
+}
+
+class LikeButton extends StatefulWidget {
+  const LikeButton({super.key});
+
+  @override
+  State<LikeButton> createState() => _LikeButtonState();
+}
+
+class _LikeButtonState extends State<LikeButton> {
+  bool liked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: () {
+        setState(() {
+          liked = !liked;
+        });
+      },
+      icon: Icon(
+        liked ? Icons.thumb_up : Icons.thumb_up_outlined,
+        color: liked ? Colors.red : Colors.black,
+      ),
+      label: Text(
+        liked ? "Liked" : "Like",
+        style: TextStyle(color: liked ? Colors.red : Colors.black),
       ),
     );
   }
@@ -210,16 +390,13 @@ class HeroImagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.white,
       body: GestureDetector(
         onTap: () => Navigator.pop(context),
         child: Center(
           child: Hero(
             tag: image,
-            child: Image.asset(
-              image,
-              fit: BoxFit.contain,
-            ),
+            child: Image.asset(image, fit: BoxFit.contain),
           ),
         ),
       ),
