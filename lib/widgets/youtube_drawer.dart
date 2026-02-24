@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/async_http_demo_page.dart';
 
 class YoutubeDrawer extends StatelessWidget {
   const YoutubeDrawer({super.key});
@@ -20,7 +21,7 @@ class YoutubeDrawer extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.menu, color: Colors.black),
+                      icon: const Icon(Icons.menu),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
@@ -32,7 +33,6 @@ class YoutubeDrawer extends StatelessWidget {
                         fontFamily: "Bebas",
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
                     ),
                   ],
@@ -73,6 +73,19 @@ class YoutubeDrawer extends StatelessWidget {
                 leading: const Icon(Icons.download),
                 title: const Text("Downloads"),
                 onTap: () {},
+              ),
+              ListTile(
+                leading: const Icon(Icons.science_outlined),
+                title: const Text('Async / HTTP Demo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AsyncHttpDemoPage(),
+                    ),
+                  );
+                },
               ),
             ],
           ),

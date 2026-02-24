@@ -18,9 +18,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
+    return Consumer<YoutubeModel>(
+      builder: (context, model, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+
+          themeMode:
+              model.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+
+          home: const HomePage(),
+        );
+      },
     );
   }
 }

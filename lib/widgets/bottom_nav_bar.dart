@@ -11,7 +11,6 @@ class BottomNavBar extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: 60,
-      color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -46,7 +45,7 @@ class NavItem extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isSelected ? Colors.red : Colors.black,
+          color: isSelected ? Colors.red : const Color.fromARGB(255, 126, 126, 126),
           size: isSelected ? 30 : 24,
         ),
       ),

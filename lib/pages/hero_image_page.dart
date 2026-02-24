@@ -8,7 +8,6 @@ class HeroImagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: GestureDetector(
         onTap: () => Navigator.pop(context),
         child: Center(

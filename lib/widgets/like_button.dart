@@ -10,7 +10,7 @@ class LikeButton extends StatefulWidget {
 class _LikeButtonState extends State<LikeButton> {
   bool liked = false;
 
-  Color get _buttonColor => liked ? Colors.red : Colors.black;
+  Color get _buttonColor => liked ? Colors.red : const Color.fromARGB(255, 129, 129, 129);
   IconData get _icon => liked ? Icons.thumb_up : Icons.thumb_up_outlined;
   String get _label => liked ? "Liked" : "Like";
 

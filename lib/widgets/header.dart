@@ -11,7 +11,6 @@ class Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -33,16 +32,25 @@ class Header extends StatelessWidget {
               ),
             ],
           ),
-
           Consumer<YoutubeModel>(
             builder: (context, model, child) {
-              return SubscriptionsBadge(
-                count: model.subscriptionsCount,
+              return SubscriptionsBadge(count: model.subscriptionsCount);
+            },
+          ),
+          Consumer<YoutubeModel>(
+            builder: (context, model, child) {
+              return IconButton(
+                icon: Icon(
+                  model.isDarkTheme ? Icons.light_mode : Icons.dark_mode,
+                ),
+                onPressed: () {
+                  model.toggleTheme();
+                },
               );
             },
           ),
         ],
       ),
-    ); 
+    );
   }
 }
