@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../pages/async_http_demo_page.dart';
 
 class YoutubeDrawer extends StatelessWidget {
   const YoutubeDrawer({super.key});
@@ -76,14 +75,12 @@ class YoutubeDrawer extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.science_outlined),
-                title: const Text('Async / HTTP Demo'),
+                title: const Text('Async / HTTP Demo (Named Route)'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const AsyncHttpDemoPage(),
-                    ),
+                    '/demo',
                   );
                 },
               ),

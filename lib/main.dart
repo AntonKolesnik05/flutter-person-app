@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'models/youtube_model.dart';
-import 'pages/home_page.dart';
+import 'pages/main_shell_page.dart';
+import 'pages/async_http_demo_page.dart';
 
 void main() {
   runApp(
@@ -25,11 +26,14 @@ class MyApp extends StatelessWidget {
 
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
+          themeMode: model.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
 
-          themeMode:
-              model.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+          routes: {
+            '/': (context) => const MainShellPage(),
+            '/demo': (context) => const AsyncHttpDemoPage(),
+          },
 
-          home: const HomePage(),
+          initialRoute: '/',
         );
       },
     );

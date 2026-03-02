@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
+import '../models/remote_photo.dart';
 import '../models/youtube_model.dart';
+import '../services/api_service.dart';
 
 class AsyncHttpDemoPage extends StatefulWidget {
   const AsyncHttpDemoPage({super.key});
@@ -14,20 +13,11 @@ class AsyncHttpDemoPage extends StatefulWidget {
 }
 
 class _AsyncHttpDemoPageState extends State<AsyncHttpDemoPage> {
+  final ApiService _api = ApiService();
+
   List<RemotePhoto> remotePhotos = [];
   bool isLoadingRemote = false;
   String httpMessage = 'HTTP запит ще не виконувався';
-
-  List<RemotePhoto> parseJson(String responseBody) {
-    final List<dynamic> jsonList = jsonDecode(responseBody);
-    final List<RemotePhoto> result = [];
-
-    for (final item in jsonList) {
-      result.add(RemotePhoto.fromJson(item));
-    }
-
-    return result;
-  }
 
   Future<void> fetchRemotePhotos() async {
     setState(() {
@@ -36,27 +26,15 @@ class _AsyncHttpDemoPageState extends State<AsyncHttpDemoPage> {
     });
 
     try {
-      final uri = Uri.parse(
-        'https://jsonplaceholder.typicode.com/photos?_limit=5',
-      );
+      final parsed = await _api.fetchPhotos(limit: 5);
 
-      final response = await http.get(uri);
-
-      if (response.statusCode == 200) {
-        final parsed = parseJson(response.body);
-
-        setState(() {
-          remotePhotos = parsed;
-          httpMessage = 'HTTP успіх: отримано ${parsed.length} записів';
-        });
-      } else {
-        setState(() {
-          httpMessage = 'HTTP помилка: statusCode = ${response.statusCode}';
-        });
-      }
+      setState(() {
+        remotePhotos = parsed;
+        httpMessage = 'HTTP успіх: отримано ${parsed.length} записів';
+      });
     } catch (e) {
       setState(() {
-        httpMessage = 'HTTP виняток: $e';
+        httpMessage = 'HTTP помилка: $e';
       });
     } finally {
       setState(() {
@@ -83,7 +61,7 @@ class _AsyncHttpDemoPageState extends State<AsyncHttpDemoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Демонстрація',
+                    'Лабораторна демонстрація',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
@@ -100,12 +78,14 @@ class _AsyncHttpDemoPageState extends State<AsyncHttpDemoPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
+                          // 2.1) .then()
                           context.read<YoutubeModel>().demoAsyncWithThen();
                         },
                         child: const Text('.then()'),
                       ),
                       ElevatedButton(
                         onPressed: () async {
+                          // 2.2) await
                           await context.read<YoutubeModel>().demoAsyncWithAwait();
                         },
                         child: const Text('await'),
@@ -163,16 +143,30 @@ class _AsyncHttpDemoPageState extends State<AsyncHttpDemoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Дані, отримані після parseJson()',
+                      'Дані після parseJson()',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
+
                     for (final photo in remotePhotos)
                       ListTile(
                         dense: true,
                         contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(photo.thumbnailUrl),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            photo.thumbnailUrl,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: Icon(Icons.broken_image),
+                              );
+                            },
+                          ),
                         ),
                         title: Text(
                           photo.title,
@@ -187,29 +181,6 @@ class _AsyncHttpDemoPageState extends State<AsyncHttpDemoPage> {
             ),
         ],
       ),
-    );
-  }
-}
-
-class RemotePhoto {
-  final int id;
-  final String title;
-  final String url;
-  final String thumbnailUrl;
-
-  const RemotePhoto({
-    required this.id,
-    required this.title,
-    required this.url,
-    required this.thumbnailUrl,
-  });
-
-  factory RemotePhoto.fromJson(Map<String, dynamic> json) {
-    return RemotePhoto(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      url: json['url'] as String,
-      thumbnailUrl: json['thumbnailUrl'] as String,
     );
   }
 }
