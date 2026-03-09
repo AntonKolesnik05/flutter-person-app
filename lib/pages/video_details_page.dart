@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/live_bar_chart.dart';
 
 import '../models/youtube_model.dart';
 import 'hero_image_page.dart';
@@ -64,20 +65,16 @@ class _VideoDetailsPageState extends State<VideoDetailsPage> {
 
           const SizedBox(height: 12),
 
-
           Text(
             widget.title,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 6),
 
-          Text(
-            widget.meta,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text(widget.meta, style: Theme.of(context).textTheme.bodyMedium),
 
           const SizedBox(height: 16),
 
@@ -90,12 +87,16 @@ class _VideoDetailsPageState extends State<VideoDetailsPage> {
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed:
-                    isSubscribed ? null : () => model.subscribe(widget.channelId),
+                onPressed: isSubscribed
+                    ? null
+                    : () => model.subscribe(widget.channelId),
                 child: Text(isSubscribed ? 'Subscribed' : 'Subscribe'),
               ),
             ],
           ),
+
+          const SizedBox(height: 16),
+          const LiveBarChart(),
 
           const SizedBox(height: 18),
 
