@@ -92,8 +92,6 @@ class _LiveBarChartState extends State<LiveBarChart>
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 150),
                               decoration: BoxDecoration(
-                                // якщо withValues не підтримується у твоєму Flutter:
-                                // заміни на barColor.withAlpha((0.85 * 255).round())
                                 color: barColor.withValues(alpha: 0.85),
                                 borderRadius: BorderRadius.circular(6),
                               ),
